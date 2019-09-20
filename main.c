@@ -77,12 +77,30 @@ void saveBMP(char* path, int w, int h, int dpi, rgb* imageBuffer)
 
     }
 
-
     fclose(img);
-
 
 }
 
+
+
+int isInMandebrotSet(float a, float b)
+{
+    float x,y;
+    float xold = 0;
+    float yold = 0;
+    
+    for(int i=0;i<255;i++)
+    {
+        x = xold*xold-yold*yold+a;
+        y = 2*xold*yold+b;
+        xold = x;
+        yold = y;
+
+        if(x*x+y*y>10) return i;
+    }
+
+    return 255;
+}
 
 
 
@@ -93,8 +111,8 @@ int main(void)
 {
 
 
-    int width  = 400,
-        height = 400,
+    int width  = 2000,
+        height = 2000,
         dpi = 96;
 
     rgb* pixels = malloc(width * height * sizeof(rgb));
@@ -102,8 +120,19 @@ int main(void)
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
             int a = y * width + x;
+            float xx = 3*(float)x/(float)width-1.5;
+            float yy = 3*(float)y/(float)height-1.5;
 
-            if ((x > 50 && x < 350) && (y > 50 && y < 350)) {
+            int c= isInMandebrotSet(xx,yy);
+            
+                pixels[a].r = c;
+                pixels[a].g = c*c%256;
+                pixels[a].b = c;
+            
+            
+            /*
+            if (isInMandebrotSet(xx,yy)) {
+                
                 pixels[a].r = 255;
                 pixels[a].g = 255;
                 pixels[a].b = 5;
@@ -112,6 +141,7 @@ int main(void)
                 pixels[a].g = 55;
                 pixels[a].b = 55;
             }
+            */
         }
     }
 
